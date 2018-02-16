@@ -1,0 +1,91 @@
+﻿<controls:MetroWindow x:Class="VOICeVIO.SinsyGUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:sinsyGui="clr-namespace:VOICeVIO.SinsyGUI"
+        mc:Ignorable="d"
+        GlowBrush="{DynamicResource AccentColorBrush}"
+        WindowStartupLocation="CenterScreen"
+        TitleCharacterCasing="Normal"
+        Title="Sinsy GUI (by VOICeVIO)" Height="350" Width="600" Icon="/Resources/logo.png" MinWidth="500" MinHeight="300"
+        >
+    <controls:MetroWindow.RightWindowCommands>
+        <controls:WindowCommands>
+            <controls:TransitioningContentControl x:Name="TranState" Transition="Down" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></controls:TransitioningContentControl>
+        </controls:WindowCommands>
+    </controls:MetroWindow.RightWindowCommands>
+    <Window.Resources>
+        <sinsyGui:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <Style x:Key="CenterStyle"
+               TargetType="Control">
+            <Setter Property="Margin" Value="3,0,0,0"></Setter>
+            <Setter Property="FontSize" Value="15"></Setter>
+            <Setter Property="VerticalAlignment"  
+                    Value="Center" />
+        </Style>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="Open"
+                        Executed="OpenFile"/>
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="125"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="80"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" TextAlignment="Center" VerticalAlignment="Top" FontSize="30" HorizontalAlignment="Left" Margin="5,0,0,0" Text="{Binding Title}"></TextBlock>
+        <controls:MetroProgressBar x:Name="MProgress" Visibility="Hidden" Grid.Row="0" Grid.Column="1" MinHeight="10" Value="100" IsIndeterminate="True"/>
+        <Label x:Name="LblState" Grid.Row="0" Grid.Column="2" Style="{StaticResource CenterStyle}"></Label>
+        
+        <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource CenterStyle}" ToolTip="选择语言">语言</Label>
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+            <RadioButton Margin="5" IsChecked="{Binding Path=Language, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static sinsyGui:Language.Japanese}}">日语</RadioButton>
+            <RadioButton Margin="5" IsChecked="{Binding Path=Language, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static sinsyGui:Language.Chinese}}" ToolTip="原版Sinsy v0.92尚不支持汉语">汉语（普通话）</RadioButton>
+            <RadioButton Margin="5" IsChecked="{Binding Path=Language, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static sinsyGui:Language.English}}" IsEnabled="False">英语</RadioButton>
+        </StackPanel>
+        
+        <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource CenterStyle}" ToolTip="包含多个字典文件的文件夹。">字典文件夹路径</Label>
+        <TextBox Text="{Binding DicPath, Mode=TwoWay}" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"></TextBox>
+        <!--<Button Content="浏览" Command="Open" CommandParameter="DicPath"  Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" MinWidth="40"></Button>-->
+        
+        <Label Grid.Row="3" Grid.Column="0" Style="{StaticResource CenterStyle}" ToolTip="需要htsvoice格式的声源模型文件。">声源文件路径</Label>
+        <ComboBox Text="{Binding HtsVoicePath, Mode=TwoWay}" ItemsSource="{Binding SavedVoicePaths}" IsEditable="True" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"></ComboBox>
+        <Button Content="浏览" Command="Open" CommandParameter="HtsVoicePath" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" MinWidth="40"></Button>
+        
+        <Label Grid.Row="4" Grid.Column="0" Style="{StaticResource CenterStyle}" ToolTip="输入MusicXML格式的乐谱文件。">乐谱输入路径</Label>
+        <ComboBox Text="{Binding XmlPath, Mode=TwoWay}" ItemsSource="{Binding SavedXmlPaths}" IsEditable="True" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center"></ComboBox>
+        <Button Content="浏览" Command="Open" CommandParameter="XmlPath" Grid.Row="4" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" MinWidth="40"></Button>
+
+        <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource CenterStyle}" ToolTip="输出WAV音频文件或TXT文本文件。请不要填写后缀名。">输出路径</Label>
+        <TextBox Text="{Binding SavePath, Mode=TwoWay}" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center"></TextBox>
+        <!--<Button Content="浏览" Grid.Row="5" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" MinWidth="40"></Button>-->
+
+        <Label Grid.Row="6" Grid.Column="0" Style="{StaticResource CenterStyle}" ToolTip="Sinsy-Remix专用">Label输出</Label>
+        <StackPanel IsEnabled="{Binding IsRemix}" Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
+            <RadioButton Margin="5" IsChecked="{Binding Path=LabelType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static sinsyGui:LabelType.None}}">无</RadioButton>
+            <RadioButton Margin="5" IsChecked="{Binding Path=LabelType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static sinsyGui:LabelType.Normal}}">标准</RadioButton>
+            <RadioButton Margin="5" IsChecked="{Binding Path=LabelType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static sinsyGui:LabelType.WithTime}}">含时间</RadioButton>
+            <RadioButton Margin="5" IsChecked="{Binding Path=LabelType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static sinsyGui:LabelType.Mono}}">Mono Label</RadioButton>
+        </StackPanel>
+        
+        <Button IsEnabled="{Binding IsRemix}" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Click="OutputLabel_Click">输出Label</Button>
+        <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal">
+            <Button VerticalAlignment="Center" HorizontalAlignment="Left" Click="Reset_Click" ToolTip="重置以上路径等信息。">重置</Button>
+        </StackPanel>
+        <Button Grid.Row="7" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="Crimson" MinWidth="50" Click="Synth_Click">合成</Button>
+    </Grid>
+</controls:MetroWindow>
+
